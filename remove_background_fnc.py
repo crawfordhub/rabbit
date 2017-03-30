@@ -28,7 +28,11 @@ def img_to_skin(fileinput,output_dir,inp):
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
     skinMask = cv2.dilate(skinMask, kernel, iterations = 10)
     skinMask = cv2.GaussianBlur(skinMask, (5, 5), 0)
-    skin = cv2.bitwise_and(img, img, mask = skinMask)
+    kernel1 = np.ones((250,250),np.uint8)
+    #Added these two parts
+    closing = cv2.morphologyEx(skinMask, cv2.MORPH_CLOSE, kernel1)
+    skin = cv2.bitwise_and(img, img, mask = closing)
+    #skin = cv2.bitwise_and(img, img, mask = skinMask)
     #this is the outputfile
     print output_dir+inp
     cv2.imwrite(output_dir+inp,skin)
