@@ -1,4 +1,6 @@
 from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 from skimage import morphology
 from skimage import measure
 from sklearn.cluster import KMeans
