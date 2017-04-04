@@ -1,6 +1,6 @@
 '''
 Directory structure:
-```
+
 data/
     train/
         Type_1/
@@ -32,7 +32,13 @@ data/
         tn1.jpg
         tn2.jpg
         ...
-```
+
+To run on remote machine (GPU MACHINE) without needing to enter that machine, copy and paste the following three lines into local terminal:
+
+cat cnn_resized_no_background.py | ssh qbit@10.0.1.131 python - outputweightsTEST; scp qbit@10.0.1.131:~/dancrawford/rabbit/outputweightsTEST.h5 .; ssh qbit@10.0.1.131 'rm ~/dancrawford/rabbit/outputweightsTEST.h5'
+
+(you will need to have your rsa public key in qbit@10.0.1.131:~/.ssh/authorized_keys)
+
 '''
 
 from keras.preprocessing.image import ImageDataGenerator
@@ -40,16 +46,20 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
+import sys
 
+output_weights = sys.argv[1]
 
 # dimensions of our images.
-img_width, img_height = 512, 512
+img_width, img_height = 100, 100
 
-train_data_dir = 'data/train'
-validation_data_dir = 'data/validation'
+# train_data_dir = './data/train'
+train_data_dir = 'dancrawford/rabbit/data/train'
+# validation_data_dir = './data/validation'
+validation_data_dir = 'dancrawford/rabbit/data/validation'
 nb_train_samples = 1200
 nb_validation_samples = 281
-epochs = 50
+epochs = 1
 batch_size = 100
 
 if K.image_data_format() == 'channels_first':
@@ -58,7 +68,7 @@ else:
     input_shape = (img_width, img_height, 3)
 
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=input_shape))
+model.add(Conv2D(64, (3, 3), input_shape=input_shape))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -111,4 +121,4 @@ model.fit_generator(
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size)
 
-model.save_weights('first_try.h5')
+model.save_weights('dancrawford/rabbit/'+output_weights+'.h5')
