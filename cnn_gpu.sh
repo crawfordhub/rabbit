@@ -1,0 +1,2 @@
+#!/bin/bash
+cat cnn_resized_no_background.py | ssh qbit@10.0.1.131 python - outputweights$1; scp qbit@10.0.1.131:~/dancrawford/rabbit/outputweights$1.h5 .; ssh qbit@10.0.1.131 "rm ~/dancrawford/rabbit/outputweights${@}.h5"
